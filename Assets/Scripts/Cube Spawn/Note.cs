@@ -20,10 +20,13 @@ public class Note : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        //Calculate current travel distance, if it equals range then despawn the note
         currentDistance = (transform.position - initPosition).magnitude;
         if (currentDistance >= range) {
             Destroy(gameObject);
         }
+        
+        //Move the note
         transform.position += speed * moveDirection * Time.fixedDeltaTime;
     }
 }
