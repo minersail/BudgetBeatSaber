@@ -282,7 +282,7 @@ MonoBehaviour:
   range: 90
   offsetTimer: 0.3
   minNoteInterval: 0.5
-  maxNoteInterval: 2
+  maxNoteInterval: 1
   minOffset: 5
   maxOffset: 15
   RightNoteOmniPrefab: {fileID: 183163052204601428, guid: 96ffed23f2b3c8944851720f257d6dab,

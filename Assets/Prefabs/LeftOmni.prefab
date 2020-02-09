@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2385801823919708605}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &4673366282961367631
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 5912245300692886703}
   - component: {fileID: 9064092936785901101}
   m_Layer: 0
-  m_Name: LeftHandNoteOmni
+  m_Name: LeftOmni
   m_TagString: LeftHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,7 +250,6 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   offsetTimer: 0
   score: {fileID: 4011841145866182410}
-  fail: {fileID: 0}
   hitFlag: 0
 --- !u!54 &9064092936785901101
 Rigidbody:
