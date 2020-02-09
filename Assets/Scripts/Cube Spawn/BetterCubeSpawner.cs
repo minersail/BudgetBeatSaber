@@ -15,16 +15,20 @@ public class BetterCubeSpawner : MonoBehaviour
     public float minOffset = 5f;
     public float maxOffset = 15f;
     [Header("Note Prefabs")]
-    public GameObject RightNotePrefab;
-    public GameObject LeftNotePrefab;
+    public GameObject RightNoteOmniPrefab;
+    public GameObject RightNoteDirectionalPrefab;
+    public GameObject LeftNoteOmniPrefab;
+    public GameObject LeftNoteDirectionalPrefab;
     public GameObject BombPrefab;
+    [Header("Other Stuff")]
+    public StatTracker stat;
     Transform endAnchor;    //The place where all notes will end up at
 
     void Start() {
         endAnchor = GameObject.FindGameObjectWithTag("EndAnchor").transform;
     }
 
-    void SpawnRandomCube() {
+    void SpawnCube() {
         //Generate spawn position
         float halfGridSize = gridSize / 2f;
         float x = Random.Range(-halfGridSize, halfGridSize) + transform.position.x;
@@ -37,25 +41,35 @@ public class BetterCubeSpawner : MonoBehaviour
         spawnPosition += offset;
 
         /*Spawn the note
-            0.00 - 0.45 = Right Note
-            0.45 - 0.90 = Left Note
+            0.00 - 0.20 = Right Note Omni-directional
+            0.20 - 0.40 = Left Note Omni-drectional
+            0.40 - 0.65 = Right Note Directional
+            0.65 - 0.90 = Left Not Directional
             0.10 - 1.00 = Bomb      */
         float noteType = Random.Range(0f, 1f);
+        int rotate = Random.Range(0, 7);
         GameObject note;
-        if (noteType < 0.45f) {
-            note = Instantiate(RightNotePrefab, spawnPosition, new Quaternion());
+        if (noteType < 0.2f) {
+            note = Instantiate(RightNoteOmniPrefab, spawnPosition, new Quaternion());
+        } else if (noteType < 0.4f) {
+            note = Instantiate(LeftNoteOmniPrefab, spawnPosition, new Quaternion());
+        } else if (noteType < 0.65f) {
+            note = Instantiate(RightNoteDirectionalPrefab, spawnPosition, new Quaternion());
         } else if (noteType < 0.9f) {
-            note = Instantiate(LeftNotePrefab, spawnPosition, new Quaternion());
+            note = Instantiate(LeftNoteDirectionalPrefab, spawnPosition, new Quaternion());
         } else {
             note = Instantiate(BombPrefab, spawnPosition, new Quaternion());
         }
 
         //Initiate the notes/bombs
-        note.GetComponent<BetterNote>().initNote(speed, range, transform.forward, offset, offsetTimer);
+        note.GetComponent<BetterNote>().initNote(speed, range, transform.forward, offset, offsetTimer, stat);
 
         //Adjust rotation of note
         Vector3 lookAtPosition = new Vector3(endAnchor.position.x, note.transform.position.y, endAnchor.position.z);
         note.transform.LookAt(lookAtPosition, Vector3.up);
+        if (noteType >= 0.4f && noteType < 0.9f) {
+            note.transform.Rotate(0f, 0f, (float)rotate / 8f * 360f);
+        }
     }
 
     float timer = 0f;
@@ -75,7 +89,7 @@ public class BetterCubeSpawner : MonoBehaviour
         timer -= Time.fixedDeltaTime;
         if (timer <= 0f) {
             timer = Random.Range(minNoteInterval, maxNoteInterval);
-            SpawnRandomCube();
+            SpawnCube();
         }
 
         //Adjust spawner's position
