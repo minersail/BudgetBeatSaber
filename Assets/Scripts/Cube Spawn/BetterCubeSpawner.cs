@@ -93,7 +93,7 @@ public class BetterCubeSpawner : MonoBehaviour
         }
 
         //Adjust spawner's position
-        transform.position = endAnchor.transform.position - transform.forward * range + transform.up * gridSize * 0.6f;
+        transform.position = endAnchor.transform.position - transform.forward * range;
     }
 
     void OnValidate() {

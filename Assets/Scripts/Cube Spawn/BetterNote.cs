@@ -11,8 +11,8 @@ public class BetterNote : MonoBehaviour
     Vector3 moveDirection;
     public Vector3 offset;
     public float offsetTimer;
+    public GameObject cuttedPrefab;
     float offsetSpeed; //Speed modifier so that the total distance travelled is the same as 1 second
-    Rigidbody rb;
     StatTracker stat;
 
     public ScoreCollider score;
@@ -21,8 +21,6 @@ public class BetterNote : MonoBehaviour
 
     private void Start()
     {
-        if (TryGetComponent<Rigidbody>(out rb))
-            rb.isKinematic = true; //Disable at start so it doesn't fly away
         hitFlag = false;
     }
 
@@ -43,10 +41,6 @@ public class BetterNote : MonoBehaviour
     {
         //Calculate current travel distance, if it equals range then despawn the note
         currentDistance = (transform.position - initPosition).magnitude;
-        if (rb != null && currentDistance >= range / 10f)
-        {
-            rb.isKinematic = false;
-        }
         if (currentDistance >= range) {
             if (tag != "Bomb")
                 stat.addScore(-1); //If the player miss the note, cut the streak. Except for bombs
@@ -72,15 +66,30 @@ public class BetterNote : MonoBehaviour
         else
             stat.addScore(0);
         
-        if (TryGetComponent<Collider>(out Collider c))
+        ContactPoint contact = collision.GetContact(0);
+        GameObject left, right;
+        float forceLeft = Random.Range(400f, 1200f);
+        float forceRight = Random.Range(400f, 1200f);
+        if (tag == "Bomb")
         {
-            c.enabled = false;
+            left = Instantiate(cuttedPrefab, transform.position, transform.rotation);
+            left.GetComponent<Rigidbody>().AddExplosionForce(forceLeft, contact.point, 3f);
+            
+            right = Instantiate(cuttedPrefab, transform.position, transform.rotation);
+            right.transform.localScale = new Vector3(0.4f, -0.4f, 0.4f);
         }
-        if (rb != null)
+        else
         {
-            ContactPoint contact = collision.GetContact(0);
-            rb.AddForceAtPosition(contact.normal * 200f, contact.point);
+            left = Instantiate(cuttedPrefab, transform.position + transform.right * -0.25f, transform.rotation);
+            left.GetComponent<Rigidbody>().AddExplosionForce(forceLeft, contact.point, 3f);
+            
+            right = Instantiate(cuttedPrefab, transform.position + transform.right * 0.25f, transform.rotation);
+            right.transform.localScale = new Vector3(-0.5f, 1f, 1f);
         }
-        Destroy(gameObject, 0.5f);
+        right.GetComponent<Rigidbody>().AddExplosionForce(forceRight, contact.point, 3f);
+        Destroy(left, 0.5f);
+        Destroy(right, 0.5f);
+        
+        Destroy(gameObject);
     }
 }
